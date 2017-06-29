@@ -1,0 +1,111 @@
+#archives_map {
+  #map {
+    position: absolute;
+    top: 61px;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+  }
+
+  #search-bar-menu {
+    position: absolute;
+    top: 77px;
+    left: 10px;
+    z-index: 1003;
+  }
+
+  #search-bar {
+    position: absolute;
+    top: 70px;
+    left: 5px;
+    z-index: 1003;
+
+    padding: 5px 10px 5px 10px;
+    height: 55px;
+
+    #search-bar-input {
+      width: 320px;
+      display: inline-block;
+    }
+    .search-bar-btn {
+      width: 40px;
+      display: inline-block;
+      a {
+        position: absolute;
+        bottom: 5px;
+      }
+    }
+
+    input {
+      margin-bottom: 0px;
+      border: none;
+    }
+
+    input[type=text]:focus:not([readonly]) {
+      border: none;
+      box-shadow: none;
+    }
+  }
+
+  #slide-out {
+    background-color: #fafafa;
+    position: absolute;
+    top: 65px;
+    z-index: 1002;
+    padding-top: 75px;
+    height: calc(100% - 65px);
+  }
+
+  #search-result {
+    table {
+      tbody {
+      }
+      td.title {
+        vertical-align: top;
+
+        a.archive-title {
+          margin: 0;
+          padding: 0;
+          font-size: 1.2rem;
+        }
+
+      }
+
+      td.thumbnail {
+        width: 80px;
+        height: 100px;
+        text-align: center;
+        vertical-align: middle;
+        padding: 5px;
+
+        img {
+          width:auto;
+          height:auto;
+          max-width:70px;
+          max-height:90px;
+        }
+      }
+    }
+  }
+
+  #btn-menu {
+    position: absolute;
+    top: 72px;
+    right: 10px;
+    z-index: 1000;
+  }
+
+  #btn-opacity-up {
+    position: absolute;
+    top: 122px;
+    right: 10px;
+    z-index: 1000;
+  }
+
+  #btn-opacity-down {
+    position: absolute;
+    top: 172px;
+    right: 10px;
+    z-index: 1000;
+  }
+}

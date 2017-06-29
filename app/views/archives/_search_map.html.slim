@@ -1,0 +1,15 @@
+div#search-result.white
+  table.bordered
+    tbody
+      - archives.each do |archive|
+        tr
+          td.title
+            = link_to archive.name, archive_path(archive.id, view_type: "map"),
+                remote: true, class: 'archive-title indigo-text', data_type: ""
+            p.grey-text.darken-3
+              = archive.description
+
+          td.thumbnail
+            = image_tag archive.thumbnail
+
+  = paginate archives, remote: true

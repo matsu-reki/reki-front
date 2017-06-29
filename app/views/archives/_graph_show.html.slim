@@ -1,0 +1,44 @@
+div.side-nav-image.black
+  - if archive.images.present?
+    = image_tag archive.images.first
+  - else
+    = image_tag archive.thumbnail
+
+div.side-nav-title.indigo
+  p.white-text = archive.name
+
+div.side-nav-menu
+  ul
+    li.waves-effect.waves-light
+      = link_to "詳細", archive_path(archive.id), class: "indigo-text"
+
+    li.waves-effect.waves-light
+      = link_to "地図上に表示する", map_archives_url(archive_id: archive.id),
+          class: "indigo-text"
+
+    li.waves-effect.waves-light.right
+      = link_to "閉じる", "#", class: "indigo-text btn-close-sidemenu"
+
+div.side-nav-content
+  div.archive-label
+    p 説明
+  div.archive-text
+    p = archive.description
+
+div.side-nav-content
+  div.archive-label
+    p 年代
+  div.archive-text
+    p = display_age_of archive
+
+div.side-nav-content
+  div.archive-label
+    p 作者
+  div.archive-text
+    p = archive.author || '不明'
+
+div.side-nav-content
+  div.archive-label
+    p 備考
+  div.archive-text
+    p = archive.note

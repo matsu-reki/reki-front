@@ -1,0 +1,46 @@
+div#archive.white
+  div.side-nav-image.black
+    - if archive.images.present?
+      = image_tag archive.images.first
+    - else
+      = image_tag archive.thumbnail
+
+  div.side-nav-title.indigo
+    p.white-text = archive.name
+
+  div.side-nav-menu
+    ul
+      li.waves-effect.waves-light
+        a.btn-back-to-result.indigo-text href="#!" 結果に戻る
+      - if archive.coordinate.longitude.present?
+        li.waves-effect.waves-light
+        = link_to "付近の歴史を見る", timeline_archive_path(archive.id),
+          class: "indigo-text"
+      li.waves-effect.waves-light
+        = link_to "詳細", archive_path(archive.id), class: "indigo-text"
+      li.waves-effect.waves-light
+        = link_to "関連図", graph_archives_path(archive_id: archive.id), class: "indigo-text"
+
+  div.side-nav-content
+    div.archive-label
+      p 説明
+    div.archive-text
+      p = archive.description
+
+  div.side-nav-content
+    div.archive-label
+      p 年代
+    div.archive-text
+      p = display_age_of archive
+
+  div.side-nav-content
+    div.archive-label
+      p 作者
+    div.archive-text
+      p = archive.author || '不明'
+
+  div.side-nav-content
+    div.archive-label
+      p 備考
+    div.archive-text
+      p = archive.note

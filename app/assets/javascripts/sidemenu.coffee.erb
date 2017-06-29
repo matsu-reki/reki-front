@@ -1,0 +1,46 @@
+$.reki ?= {}
+
+# サイドメニュー関連の変数、関数を管理する
+$.reki.sidemenu ?= {}
+
+# サイドメニューの開閉状態を管理する変数
+$.reki.sidemenu.enabled = false
+
+#
+# サイドメニューを開く
+#
+$.reki.sidemenu.open = ()->
+  if $.reki.sidemenu.enabled
+    return
+
+  $("#slide-out").css({width: "450px"});
+  $("#slide-out").velocity(
+    { translateX: [0, -1 * 450] },
+    {
+      duration: 300,
+      queue: false,
+      easing: "easeOutQuad",
+      complete: -> $.reki.sidemenu.enabled = true
+    }
+  );
+
+  return
+
+#
+# サイドメニューを閉じる
+#
+$.reki.sidemenu.close = ->
+  if !$.reki.sidemenu.enabled
+    return
+
+  $("#slide-out").velocity(
+    { translateX : "-100%" },
+    {
+      duration: 200,
+      queue:    false,
+      easing:   "easeOutCubic",
+      complete: -> $.reki.sidemenu.enabled = false
+    }
+  )
+
+  return

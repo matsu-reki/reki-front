@@ -1,0 +1,61 @@
+.row style="padding-top: 10px;"
+  .col.m12
+    .card
+      .card-content
+        span.card-title
+          | 資料一覧
+
+        .row
+          .col.m12
+            div
+              ul.tabs
+                li.tab.col.s2
+                  a class="#{params.dig("archives", "category").blank? ? "active" : '' }" href="#all" data-type=""
+                    | すべて
+
+                - Settings.archive.category.each.with_index do |c, i|
+                  li.tab.col.s2
+                    a href="#category-i" data-type="#{c}" class="#{ c == params.dig("archives", "category") ? "active" : '' }"
+                      = c
+
+        = form_for :archives, method: :get do |f|
+          .row
+            .col.m6
+              .input-field
+                = f.hidden_field :category, value: params.dig("archives", "category")
+                = f.text_field :keyword, value: params.dig("archives", "keyword"),
+                  placeholder: "検索キーワードを入力してください"
+            .col.m6
+              .input-field
+                = f.submit "検索", class: "btn"
+          - if @response.present? && @response.pagination.present?
+            .row
+              .col.m12
+                p.grey-text
+                  | #{@response.pagination.total_count} 件の資料が見つかりました。
+
+.row
+  - if @response.present? && @response.data.present?
+    - @response.data.each do |a|
+      .col.m2
+        .card
+          .card-image
+            = image_tag a.thumbnail
+
+          .card-action.indigo
+            = link_to truncate(a.name, length: 20), archive_url(a.id), class: "white-text"
+
+- if @response.present? && @response.pagination.count > 0
+  .row
+    .col.m12
+      .card
+        .card-content style="padding: 5px;"
+          = api_paginate @response, archives_url
+
+javascript:
+
+  $(document).ready(function() {
+    $("ul.tabs a").click(function(e) {
+      $("#archives_category").val($(e.target).attr("data-type"))
+    });
+  });

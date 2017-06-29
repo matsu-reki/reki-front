@@ -1,0 +1,15 @@
+#error-page.row style="position: relative; top: 5%;"
+  .col.offset-m3.m6
+    .card
+      .card-content.center-align
+        span.red-text.card-title
+          i.material-icons warning
+          span
+           | お探しのページが見つかりませんでした。
+
+        div.card-body
+          p
+            | お探しのページは一時的にアクセスできない状態か、移動もしくは削除された可能性があります。
+
+        div
+          = link_to "トップページへ戻る", root_url, class: "btn"

@@ -1,0 +1,28 @@
+#top
+.intro.cyan
+  .loader
+    h2 準備中です
+    p.fineprint (Might take a while)
+    #downarrow
+      svg width="57px" height="31px" viewBox="0 0 57 31" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
+        g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"
+          path d="M42.75,71.625 L57,71.625 L28.5,41.625 L-9.59232693e-14,71.625 L14.25,71.625 L28.5,56.625 L42.75,71.625 Z" id="down" fill="#424242" sketch:type="MSShapeGroup" transform="translate(28.500000, 36.000000) rotate(-180.000000) translate(-28.500000, -36.000000) "
+
+.container
+
+#maps
+  .control
+
+  - @response.data.each do |a|
+      - a.images.each do |i|
+        .map style="background-image: url('#{i}')"
+          h2.top = name_with_created_on(a)
+          h2.bottom = name_with_created_on(a)
+
+.intro.cyan
+  div.move-top-container
+    a.move-top href="#top" 先頭に戻る
+
+javascript:
+  $(document).ready(function() { $.reki.timeline.init() });
+  $(window).load(function() { $.reki.timeline.load() });

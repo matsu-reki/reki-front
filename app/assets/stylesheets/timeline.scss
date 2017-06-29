@@ -1,0 +1,148 @@
+#archives_timeline {
+
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+
+  h2 {
+    font-size: 2em;
+    margin: 0;
+    color: #fff;
+    text-shadow: 0 0 4px #000;
+  }
+
+  .intro {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .intro div {
+    position: absolute;
+    top: 40%;
+    width: 100%;
+    color: #fff;
+  }
+
+  .intro .move-top-container {
+    text-align: center;
+  }
+
+  .intro .move-top,
+  .intro div h2 {
+    font-size: 3em;
+    color: #fff;
+    text-shadow: none;
+    text-align: center;
+    margin-bottom: 20px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  path {
+    fill: white;
+  }
+
+  .map {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    border-top: 1px solid #000;
+    background-size: auto 100%;
+    background-position: 50% center;
+    height: 800px;
+  }
+
+  @media only screen and (max-device-width: 480px) {
+    .map {
+      background-attachment: scroll;
+      background-size: cover;
+    }
+  }
+
+  .map h2 {
+    position: absolute;
+    text-align: left;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  h2.bottom {
+    position: absolute;
+    bottom: 20px;
+  }
+
+  h2.top:before, h2.bottom:before {
+    content: "";
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+  }
+
+  h2.top:before {
+    border-bottom: 10px solid #F85200;
+    top: -10px;
+  }
+
+  h2.bottom:before {
+    border-top: 10px solid #F85200;
+    bottom: -30px;
+  }
+
+  .map h2 {
+    right: 0%;
+  }
+
+  #downarrow {
+    position: relative;
+    width: 58px;
+    margin: 0 auto;
+    display: none;
+  }
+
+  #downarrow svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-animation: down 2s infinite;
+    -ms-animation: down 2s infinite;
+    -moz-animation: down 2s infinite;
+    animation: down 2s infinite;
+  }
+
+  @-webkit-keyframes down {
+    0% { top: 0; }
+    50% { top: 20px; }
+    100% { top: 0; }
+  }
+
+  @-ms-keyframes down {
+    0% { top: 0; }
+    50% { top: 20px; }
+    100% { top: 0; }
+  }
+
+  @-moz-keyframes down {
+    0% { top: 0; }
+    50% { top: 20px; }
+    100% { top: 0; }
+  }
+
+  @keyframes down {
+    0% { top: 0; }
+    50% { top: 20px; }
+    100% { top: 0; }
+  }
+}

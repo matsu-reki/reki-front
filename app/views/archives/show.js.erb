@@ -1,0 +1,19 @@
+$('#archive-show').html(
+  '<%= j(render partial: @partial_view, locals: { archive: @archive }) %>'
+);
+
+<% if @partial_view == 'map_show' -%>
+  <% if @archive.maptile.present?  %>
+    $.reki.map.layer.addVector("<%= j @archive.maptile %>");
+  <% end -%>
+
+  <% if @archive.coordinate.longitude.present? && @archive.coordinate.latitude.present? %>
+    $.reki.map.setCenter(
+      <%= raw @archive.coordinate.longitude %>,
+      <%= raw @archive.coordinate.latitude %>
+    );
+  <% end -%>
+<% end -%>
+
+$.reki.map.showDetail();
+$.reki.sidemenu.open();

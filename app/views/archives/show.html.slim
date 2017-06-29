@@ -1,0 +1,85 @@
+div.carousel-wrapper
+  div.row
+    div.col.m12
+        div class="carousel"
+          - @archive.images.each do |image|
+            div.carousel-cell
+              = image_tag image, class: "carousel-cell-image"
+
+  div.row
+    div.col.offset-m3.m6
+      div class="carousel-nav"
+        - @archive.images.each do |image|
+          div.carousel-cell
+            = image_tag image, class: "carousel-cell-image"
+
+div.container
+  div.row
+    div.col.m12
+      div.card
+        div.card-content
+          div.archive-content
+            div.archive-label
+              div.row.no-mar-bot
+                div.col.m3
+                  p タイトル
+                div.col.m9
+                  div.right
+                    = link_to "関連図を見る", graph_archives_url(archive_id: @archive.id),
+                      class: "btn waves-effect waves-light"
+
+                    = link_to "地図上に表示する", map_archives_url(archive_id: @archive.id),
+                      class: "btn waves-effect waves-light"
+
+            div.archive-text
+              p = @archive.name
+
+          div.archive-content
+            div.archive-label
+              p 説明
+            div.archive-text
+              p = @archive.description
+
+          div.archive-content
+            div.archive-label
+              p 年代
+            div.archive-text
+              p = display_age_of @archive
+
+          div.archive-content
+            div.archive-label
+              p 作者
+            div.archive-text
+              p = @archive.author || '不明'
+
+          div.archive-content
+            div.archive-label
+              p 備考
+            div.archive-text
+              p = @archive.note
+
+          div.row.no-mar-bot
+            div.col.m12
+              div.right
+                = link_to "一覧へ戻る", archive_url, class: "btn waves-effect waves-light"
+
+
+javascript:
+  $(document).ready(function() {
+    $('.carousel').slick({
+      slidesToShow  : 1,
+      slidesToScroll: 1,
+      arrows        : false,
+      fade          : true,
+      asNavFor      : '.carousel-nav'
+    });
+    $('.carousel-nav').slick({
+      asNavFor      : '.carousel',
+      infinite      : false,
+      dots          : false,
+      arrows        : true,
+      focusOnSelect : true,
+      slidesToShow  : 4,
+      slidesToScroll: 1,
+    });
+  });

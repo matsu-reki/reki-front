@@ -1,0 +1,21 @@
+#graph.cyan
+
+#slide-out.side-nav
+  span#archive-show
+    - if @archive
+      = render partial: 'graph_show', locals: { archive: @archive }
+
+= form_for :show, method: :get, remote: true, html: { id: :show_form } do |f|
+  = hidden_field_tag :view_type
+
+javascript:
+  $(document).ready(function() {
+    var node_id = #{{params[:archive_id].to_json}}
+    if(node_id){
+      $.reki.graph.draw(node_id);
+      $.reki.sidemenu.open();
+    }
+    $(document).on("click", ".btn-close-sidemenu", function(e){
+      $.reki.sidemenu.close();
+    })
+  });

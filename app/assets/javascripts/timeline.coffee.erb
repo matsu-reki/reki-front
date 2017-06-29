@@ -1,0 +1,233 @@
+# 年表図関連の変数、関数を管理する
+$.reki ?= {}
+$.reki.timeline ?= {}
+
+$.reki.timeline.isdevice = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+
+#
+# スピナーを初期化する
+#
+$.reki.timeline.initSpinner = ()->
+  options = {
+      lines: 40,            # The number of lines to draw
+      length: 0,            # The length of each line
+      width: 12,            # The line thickness
+      radius: 160,          # The radius of the inner circle
+      corners: 1,           # Corner roundness (0..1)
+      rotate: 0,            # The rotation offset
+      color: '#fff',        # #rgb or #rrggbb
+      speed: 1,             # Rounds per second
+      trail: 60,            # Afterglow percentage
+      shadow: false,        # Whether to render a shadow
+      hwaccel: false,       # Whether to use hardware acceleration
+      className: 'spinner', # The CSS class to assign to the spinner
+      # zIndex: 9,          # The z- index(defaults to 2000000000)
+      # top: '100px',       # Top position relative to parent in px
+      # left: '50%'         # Left position relative to parent in px
+  }
+  spin = new Spinner(options).spin()
+  $(".loader").append(spin.el)
+  return
+
+#
+# 背景画像のセットアップ
+#
+$.reki.timeline.mapBackground = ()->
+  if !$.reki.timeline.isdevice
+    return
+  wintop = $(window).scrollTop()
+  winw = $(window).width()
+  winh = $(window).height()
+  bodyh = $("body").height()
+  main = $("#maps")
+  maps = $(".map")
+
+  $('.intro').css({ 'width': winw, 'height': winh, })
+
+  ratio = winw / 460
+  main.width(winw)
+  main.height(winh)
+  main.css({ position: "fixed" })
+  maps.width(winw)
+  maps.height(930*ratio)
+
+  position = wintop / bodyh
+  l = maps.length
+  shown = l * position
+  mapshown = Math.floor(shown)
+  parsed = parseFloat("." + shown.toFixed(2).split(".")[1])
+  opacity = 1 - parsed
+
+  if opacity == 1 && Math.round(shown) > mapshown
+    opacity = 0
+
+  if mapshown < 0
+     mapshown = 0
+
+  if mapshown >= l
+    mapshown = l - 1;
+
+  for i in [0..(l-1)]
+    map = $(maps[i]);
+
+    if i == mapshown
+      map.css({opacity: opacity})
+    else if (i == mapshown+1)
+      map.css({opacity:1})
+    else
+      map.css({opacity:0})
+
+  return
+
+#
+# Windowリサイズ時に、HTML要素のサイズを変更する
+#
+$.reki.timeline.resizeWindow = (ready)->
+  if ready
+    $.reki.timeline.mapBackground()
+
+  $.reki.timeline.winWidth = $(window).width()
+  $.reki.timeline.winHeight = $(window).height()
+  $.reki.timeline.photoWidth = 1053
+  $.reki.timeline.photoHeight = 2130
+  $.reki.timeline.ratio = $.reki.timeline.photoWidth / $.reki.timeline.winWidth
+
+  $(".intro").css({
+    "width":  $.reki.timeline.winWidth,
+    "height": $.reki.timeline.winHeight
+  })
+  return
+
+#
+# 年表表示用のコンテナを初期化する
+#
+$.reki.timeline.initContainer = ()->
+  if !$.reki.timeline.isdevice
+    return
+
+  $(".intro").first().css({ background:"transparent" });
+
+  $("h2.bottom").remove();
+  maps = $(".map");
+  container = $(".container");
+  main = $("#maps");
+  main.css({
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: -1
+  })
+
+  winw = $(window).width()
+  $.reki.timeline.ratio = winw/460
+  container.height(930*$.reki.timeline.ratio*(maps.length+2));
+
+  maps.css({
+    position: "absolute"
+    ,backgroundAttachment: "scroll"
+    ,backgroundSize: "cover"
+    ,opacity: 1
+    ,top: 0
+  });
+
+  for i in [0..(maps.length-1)]
+    map = $(maps[i])
+    map.css({zIndex:maps.length-i})
+
+  return
+
+#
+# document ready 時に実行する
+#
+$.reki.timeline.init = ()->
+  $.reki.timeline.resizeWindow(false)
+
+  $(window).resize (e)->
+    $.reki.timeline.resizeWindow(true)
+
+  $.reki.timeline.initSpinner();
+
+#
+# 全コンテンツ読み込み後に実施する
+#
+$.reki.timeline.load = ()->
+  $(".spinner").remove();
+  $(".intro div h2").text("スクロールしてください");
+  $(".intro .fineprint").remove();
+  $("#downarrow").css("display", "block");
+  $("body").css("overflow", "scroll");
+
+  $.reki.timeline.winWidth = $(window).width();
+  $.reki.timeline.winHeight = $(window).height();
+  $.reki.timeline.photoWidth = 1053;
+  $.reki.timeline.photoHeight = 2130;
+  $.reki.timeline.big = false
+  $.reki.timeline.ratio = ($.reki.timeline.photoWidth/$.reki.timeline.winWidth)
+  $.reki.timeline.minPct = 0
+  $.reki.timeline.maxPct = 100;
+  $.reki.timeline.pickY = 0
+  $.reki.timeline.basePct = 0
+  $.reki.timeline.dragging = false;
+
+  $.reki.timeline.isdevice = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+
+  if $.reki.timeline.isdevice
+    $(".control").remove()
+    $.reki.timeline.initContainer()
+    $.reki.timeline.mapBackground()
+
+  $(window).scroll ()->
+    $.reki.timeline.mapBackground()
+    win = $(window)
+    last = $('.intro').last()
+
+    if win.scrollTop() > win.height() && win.scrollTop() < last.offset().top - last.height()
+      $('.control').fadeIn()
+    else
+      $('.control').fadeOut()
+
+  $(window).mousedown (e)->
+    target = $( e.target );
+    if target.is(".map") && $.reki.timeline.big
+      e.stopPropagation();
+      $.reki.timeline.pickY = e.pageY;
+      cssPos = $(".map").first().css("background-position");
+      $.reki.timeline.basePct = parseFloat(cssPos.split(" ")[1]);
+      $.reki.timeline.dragging = true;
+
+  $(window).mousemove (e)->
+    target = $( e.target );
+    if $.reki.timeline.dragging && $.reki.timeline.big
+      newY = e.pageY;
+      deltaY = newY - $.reki.timeline.pickY;
+      deltaPct = 100 * deltaY / $.reki.timeline.photoHeight;
+      pct = $.reki.timeline.basePct - deltaPct;
+
+      if (pct > $.reki.timeline.maxPct)
+        pct = $.reki.timeline.maxPct
+
+      if (pct < $.reki.timeline.minPct)
+        pct = $.reki.timeline.minPct
+
+      # console.log("delta", deltaY, "ratio", $.reki.timeline.ratio, "basePct", $.reki.timeline.basePct, "deltaPct", deltaPct, "pct", pct);
+      pos = '50% ' + pct + '%';
+      $('.map').css('background-position',pos);
+
+  $(window).mouseup (e)->
+    $.reki.timeline.dragging = false;
+
+  metas = document.getElementsByTagName('meta');
+
+  gestureStart = () ->
+    for meta in metas
+      if meta.name == "viewport"
+        meta.content = "width=device-width, minimum-scale=0.25, maximum-scale=1.6";
+
+  if navigator.userAgent.match(/iPhone/i)
+    for meta in metas
+      if meta.name == "viewport"
+        meta.content = "width=device-width, minimum-scale=1.0, maximum-scale=1.0";
+
+    document.addEventListener("gesturestart", gestureStart, false);

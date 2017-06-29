@@ -1,0 +1,22 @@
+#
+# APIの設定
+# 環境に合わせて settting.local.yml で値を上書きすること
+#
+api:
+  # URL
+  url: "http://localhost:3000"
+
+  v1:
+    archives: /api/v1/archives
+    tags: /api/v1/tags
+
+
+#
+# 資料の分類
+#
+archive:
+  category:
+    - 文献
+    - 図像
+    - 考古
+    - 民俗

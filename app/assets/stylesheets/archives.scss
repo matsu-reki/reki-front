@@ -1,0 +1,83 @@
+#archives_index {
+  .card { width: 100%; }
+  .card-image {
+    padding: 5px;
+
+    img {
+      width: auto;
+      max-width: 160px;
+      height: 200px;
+      margin: 0 auto;
+    }
+  }
+
+  .card-action {
+    text-align: center;
+    height: 80px;
+  }
+
+  .input-field input#search {
+    display: block;
+    line-height: inherit;
+    padding-left: 4rem;
+    width: calc(100% - 4rem);
+  }
+  .input-field input#search + label {
+    top: 3rem;
+    left: 1rem;
+  }
+}
+
+#archives_show {
+ .carousel-wrapper {
+    margin-top: 5px;
+    padding: 10px;
+    background: #111;
+  }
+
+  .carousel {
+    margin: 15px 0;
+
+    .carousel-cell {
+      width: 66%;
+    }
+
+    .carousel-cell-image {
+      display: block;
+      height: 100%;
+      max-height: 400px;
+      width: auto;
+      margin: auto;
+    }
+  }
+
+ .carousel-nav {
+   .carousel-cell {
+      width: 130px;
+      img.carousel-cell-image {
+        max-width: 120px;
+        margin: auto;
+      }
+    }
+  }
+
+ .archive-content {
+    padding-bottom: 35px;
+
+    a {
+      margin-right: 5px;
+    }
+
+    .archive-label {
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(160, 160, 160, 0.2);
+
+      p {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #666;
+      }
+    }
+  }
+}

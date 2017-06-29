@@ -1,0 +1,18 @@
+#error-page.row style="position: relative; top: 5%;"
+  .col.offset-m3.m6
+    .card
+      .card-content.center-align
+        span.red-text.card-title
+          i.material-icons warning
+          span
+            | ページを表示できませんでした。
+
+        div.card-body
+          p
+            | ご不便おかけし申し訳ございません。
+          br
+          p
+            | トップページに戻り、操作をやり直してください。
+
+        div
+          = link_to "トップページへ戻る", root_url, class: "btn"

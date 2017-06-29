@@ -1,0 +1,15 @@
+div#search-result.white
+  table.bordered
+    tbody
+      - @archives.each do |archive|
+        tr
+          td.title
+            a.archive-title.indigo-text data-type="" href="#!"
+              = archive.name
+            p.grey-text.darken-3
+              = archive.discription
+
+          td.thumbnail
+            = image_tag archive.thumbnail
+
+//"#{n == 1 ? "map" : "image"}"

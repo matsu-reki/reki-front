@@ -1,0 +1,197 @@
+# 地図関連の変数、関数を管理する
+$.reki ?= {}
+$.reki.map ?= {}
+$.reki.map.layer ?= {}
+$.reki.map.default_marker = "<%= image_path("marker/red.png") %>"
+
+#
+# 検索結果を表示する
+#
+$.reki.map.showResult = ()->
+  $("#result").show()
+  $("#archive-show").hide()
+  return
+
+#
+# 資料情報を表示する
+#
+$.reki.map.showDetail = ()->
+  $("#archive-show").show()
+  $("#result").hide()
+  return
+
+#
+# 地図上のベースレイヤ以外のレイヤを削除する
+#
+$.reki.map.layer.reset = ->
+  map = $.reki.map.canvas
+  markerLayer = $.reki.map.layer.marker
+  vectorLayer = $.reki.map.layer.vector
+
+  map.removeLayer(markerLayer)
+  map.removeLayer(vectorLayer)
+
+  $.reki.map.layer.marker = null
+  $.reki.map.layer.vector = null
+
+  return
+
+#
+# 地図上のに古地図を表示する
+#
+$.reki.map.layer.addVector = (url) ->
+  if !url
+    return
+
+  map = $.reki.map.canvas
+  markerLayer = $.reki.map.layer.marker
+  vectorLayer = $.reki.map.layer.vector
+
+  # 順番入れ替えのために一旦削除する
+  if markerLayer
+    map.removeLayer(markerLayer)
+
+  if vectorLayer
+    map.removeLayer(vectorLayer)
+
+  newVectorLayer = new ol.layer.Tile({
+    source: new ol.source.XYZ({ url: url, projection: "EPSG:3857" })
+  })
+
+  $.reki.map.layer.vector = newVectorLayer
+  map.addLayer(newVectorLayer)
+
+  # 順番入れ替えのために再度追加する
+  if markerLayer
+    map.addLayer(markerLayer)
+
+  return
+
+#
+# 地図上のにマーカを表示する
+#
+$.reki.map.layer.addMarker = (coordinates)->
+  if !coordinates || coordinates.length < 1
+    return
+
+  map = $.reki.map.canvas
+  markerLayer = $.reki.map.layer.marker
+
+  if markerLayer
+    map.removeLayer(markerLayer)
+
+  markerStyle = new ol.style.Style({
+    image: new ol.style.Icon( {
+      opacity: 1,
+      src: $.reki.map.default_marker,
+      size: [128, 128],
+      scale: 0.5
+    })
+  });
+
+  markers = [];
+  for c in coordinates
+    marker = new ol.Feature({
+      geometry: new ol.geom.Point(
+        ol.proj.transform(c.point, "EPSG:4326", "EPSG:3857"),
+        "XY"
+      ),
+      archive_id: c.id
+    });
+    markers.push(marker);
+
+  markerSource = new ol.source.Vector({features: markers});
+  markerLayer = new ol.layer.Vector({
+    source: markerSource,
+    style: markerStyle
+  });
+
+  $.reki.map.layer.marker = markerLayer
+  map.addLayer(markerLayer)
+
+  return
+
+#
+# 地図の表示位置を変更する
+#
+$.reki.map.setCenter = (lon, lat)->
+  $.reki.map.canvas.getView().setCenter(
+    ol.proj.transform( [lon, lat], 'EPSG:4326', 'EPSG:3857')
+  )
+  return
+
+#
+# 地図画面の初期化処理
+#
+$.reki.map.init = (data = {})->
+  # 検索ボタン押下
+  $(document).on "click", "#search-bar-submit", (e)->
+    $("#search_form").submit()
+
+    e.preventDefault()
+    return
+
+  # クリアボタン押下
+  $(document).on "click", "#search-bar-clear", (e)->
+    $.reki.sidemenu.close()
+    $.reki.map.layer.reset()
+    $("#archive-show").hide()
+    $("#result").show()
+
+    e.preventDefault()
+    return
+
+  # 検索結果の戻るボタン押下
+  $(document).on "click", "a.btn-back-to-result", (e)->
+    $("#archive-show").hide()
+    $("#result").show()
+    e.preventDefault()
+    return
+
+  # ベースレイヤー（国土地理院タイル）
+  baseLayer = new ol.layer.Tile({
+    source: new ol.source.XYZ({
+      attributions: [
+        new ol.Attribution({
+          html: "<a href='http://maps.gsi.go.jp/development/ichiran.html' target='_blank'>地理院タイル</a>"
+        })
+      ],
+      url: "http://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+      projection: "EPSG:3857"
+    })
+  })
+
+  map = new ol.Map({
+    target  : "map",
+    renderer: ["canvas", "dom"],
+    layers  : [ baseLayer ],
+    controls: ol.control.defaults({ attributionOptions: ({ collapsible: false }) }),
+    view: new ol.View({
+      projection: "EPSG:3857",
+      center: ol.proj.transform([133.049498, 35.475482], "EPSG:4326", "EPSG:3857"),
+      maxZoom: 17,
+      minZoom: 13,
+      zoom: 15
+    })
+  });
+
+  # Markerをクリックした場合のイベント
+  map.on "click", (e)->
+    feature = map.forEachFeatureAtPixel(
+      e.pixel,
+      (feature, layer)-> return feature
+    )
+
+    if feature
+      archive_id = feature.get("archive_id")
+      $("#show_form").attr("action", "<%= Rails.application.config.relative_url_root %>/archives/" + archive_id);
+      $("#view_type").val("map")
+      $("#show_form").submit()
+    else
+      $.reki.sidemenu.close()
+
+  $.reki.map.canvas = map
+  $.reki.map.layer.addVector(data.maptile)
+  $.reki.map.layer.addMarker(data.coordinates)
+
+  return

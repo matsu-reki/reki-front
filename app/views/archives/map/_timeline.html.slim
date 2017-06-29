@@ -1,0 +1,11 @@
+div#timeline
+
+/
+  div.timeline-content
+    ul.black
+      - (1..15).each do |n|
+        li
+          div.image-title.white-text
+            = "#{1800 + n * 10} 年"
+          div.image
+            = image_tag "archives/thumbnail/#{n}.jpg"

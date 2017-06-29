@@ -1,0 +1,5 @@
+$('#result').html('<%= j(render partial: "search_map", locals: { archives: @archives }) %>');
+
+$.reki.map.layer.addMarker(<%= raw(@coordinates) %>);
+$.reki.map.showResult();
+$.reki.sidemenu.open();

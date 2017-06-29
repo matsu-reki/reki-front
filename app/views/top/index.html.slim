@@ -1,0 +1,124 @@
+section.main
+  div.gradient-overlay
+
+  div.main-content
+    div.row style="margin-bottom: 5px;"
+      div.col.m12
+        h1.main-title.white-text.center 松江G空間ミュージアム
+        h1.main-subtitle.white-text.center
+          | 〜 つながる歴史 〜
+
+        div.row
+          div.col.offset-m2.m8
+            div.main-desc.white-text
+              p
+                | 城下町松江の新たな資料活用モデルづくりに取り組むため、
+                a.light-blue-text.bold-txt href="http://matsu-reki.jp" 松江歴史館
+                |  を中心施設としたプロジェクトです。
+                | 江戸時代の絵図や古い写真など地域に眠る資料の掘り起こしとともに、それら資料に可能な限り位置情報を付与し、GISを活用し歴史的な景観や昔の暮らしなどが身近に感じられるようにする、「見える化」と「アーカイブ」の実現を目指しています。
+
+    div.row
+      div.col.offset-m3.m6
+        div.row
+          = form_for :archives, url: archives_url, method: :get do |f|
+            div.col.m9
+              = f.text_field :keyword, placeholder: "資料を検索する", class: 'no-mar-bot', id: 'search'
+            div.col.m3
+              = f.submit '検索', class: 'btn blue darken-4', style: "width:100%;"
+
+  div.main-footer
+    div.row
+      div.col.m12
+        span.main-footer-title.white-text 最近追加した資料
+        span.main-footer-link
+          = link_to "すべて見る", archives_url, class: "light-blue-text"
+
+    div.row
+      div.col.m12
+        div.main-carousel
+          - if @response.present? && @response.data.present?
+            - @response.data.each do |r|
+              div.carousel-cell
+                a href=archive_url(r.id)
+                  = image_tag r.thumbnail
+
+section.description.white
+  div.container
+    div.row
+      div.col.s12.m5
+        div.icon-block
+          h2.center.brown-text
+            i.material-icons map
+          h5.center
+            | 古地図
+
+        p.light
+          | 松江市の古地図を現在の地図上に重ねて表示することで、松江市の過去〜現代の移り変わりを知ることができます。
+          | また、地図上の指定した場所に関連する資料を年代順に閲覧でき、松江市の歴史を学ぶためにも役立ちます。
+
+      div.col.s12.m2
+
+      div.col.s12.m5
+        div.icon-block
+          h2.center.brown-text
+            i.material-icons link
+          h5.center
+            | 関連図
+
+          p.light
+            | 作成者、場所、時代などの情報から資料同士のつながりをソーシャルグラフ風に表示することで、松江市の歴史の思いがけない繋がりを知ることができます。
+
+footer
+  div.container
+    dir.row
+      div.col.m6
+        dif.right
+          = image_tag "logo.png"
+
+      div.col.m6
+        dif.left
+          span
+            | 〒690-0887 島根県松江市殿町279番地
+            br
+            | TEL.0852-32-1607／FAX.0852-32-1611
+            br
+            | E-mail : rekishi1607@mable.ne.jp
+
+
+    dir.row
+      div.col.offset-m3.m6
+        div.footer-copyright
+          span Copyright MATSUE REKISHIKAN All Rights Reserved
+
+javascript:
+  $(document).ready(function(){
+    $('.main-carousel').slick({
+      infinite      : false,
+  		dots          : false,
+      slidesToShow  : 9,
+      slidesToScroll: 9,
+      responsive: [
+          {
+            breakpoint: 1024,
+            settings: {
+              slidesToShow  : 8,
+              slidesToScroll: 8,
+            }
+          },
+          {
+            breakpoint: 600,
+            settings: {
+              slidesToShow  : 5,
+              slidesToScroll: 5,
+            }
+          },
+          {
+            breakpoint: 480,
+            settings: {
+              slidesToShow  : 4,
+              slidesToScroll: 4,
+            }
+          }
+        ]
+    });
+  });

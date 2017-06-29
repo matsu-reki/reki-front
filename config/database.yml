@@ -1,0 +1,20 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+#  username: user
+#  password: <%= ENV['REKI-FRONT_DATABASE_PASSWORD'] %>
+
+development:
+  <<: *default
+  database: reki_front_development
+
+test:
+  <<: *default
+  database: reki_front_test
+
+production:
+  <<: *default
+  database: reki_front_production

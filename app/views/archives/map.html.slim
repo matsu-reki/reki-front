@@ -1,0 +1,24 @@
+#map
+
+#search-bar.white.z-depth-2
+  = form_for :search, url: search_map_archives_url, method: :get, remote: true, html: { id: :search_form } do |f|
+    div#search-bar-input
+      = f.text_field :keyword, placeholder: "資料を検索する"
+    div#search-bar-submit.search-bar-btn
+      a href="#!"
+        i.small.material-icons search
+    div#search-bar-clear.search-bar-btn
+      a.grey-text href="#!"
+        i.small.material-icons clear
+
+div#slide-out.side-nav
+  span#archive-show
+  span#result
+
+= form_for :show, method: :get, remote: true, html: { id: :show_form } do |f|
+  = hidden_field_tag :view_type
+
+javascript:
+  $(document).ready(function() {
+    $.reki.map.init(#{{ @data }});
+  });

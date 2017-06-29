@@ -1,0 +1,139 @@
+# 関連図関連の変数、関数を管理する
+$.reki ?= {}
+$.reki.graph ?= {}
+
+#
+# ファイル名、サイズから画像ファイルのURLを取得する
+#
+$.reki.graph.url = (url, size_name)->
+  if size_name
+    return "#{url}\&size=#{size_name}"
+  else
+    return "#{url}";
+
+#
+# 資料の関連図を描画する
+#
+$.reki.graph.draw = (id)->
+  width  = $("#graph").innerWidth()
+  height = $("#graph").innerHeight()
+
+  $("body > div#graph > svg").remove()
+  $("body > div#graph > div").remove()
+  $("body").append("<div class='loader'></div>")
+
+   #グラフの複雑さに応じて変える必要がある
+  num = 10000;
+
+  svg = d3.select("#graph").append("svg")
+  .attr("width", width)
+  .attr("height", height - 20);
+
+  force = d3.layout.force()
+    .size([width, height])
+    .charge(-35000)         #ノード間に働く力。負だと反発、正だと引き合う
+    .gravity(0.4)           # 画面中心に引き寄せる力
+
+  # jsonを取得するurlを求める
+  url = "<%= Rails.application.config.relative_url_root %>/archives/draw.json?node_id=#{id}"
+  href = window.location.href
+  re = /type=(\w+)/
+  match = re.exec(href)
+  if match
+    url = url + '&type=' + match[1]
+
+  min_zoom = 0.3
+  max_zoom = 1.2
+  zoom = d3.behavior.zoom().scaleExtent([min_zoom, max_zoom]).size([width, height])
+  g = svg.append("g")
+
+  svg.style("cursor", "move")
+
+  d3.json url, (error, graph)->
+    if error
+      throw error
+
+    force
+      .nodes(graph.nodes)
+      .links(graph.links)
+
+    # 初期位置を決定することにより、ランダム性を排除
+    # ただし、選択しているノードは画面の真ん中とする
+    n = graph.nodes.length
+    graph.nodes.forEach (d, i)->
+      if d.fixed
+        d.x = width / 2
+        d.y = height / 2
+      else
+        d.x = d.y = width / n * i
+
+    link = g.selectAll(".link")
+      .data(graph.links)
+      .enter().append("g")
+      .attr("class", "link")
+
+    link.append("line")
+      .style("stroke-width", "4")
+      .style("stroke-dasharray", "7 7")
+      .style("stroke", "#fff")
+
+    node = g.selectAll(".node")
+      .data(graph.nodes)
+      .enter().append("g")
+      .attr("class", "node")
+      .attr("id", (d)-> return d.id )
+      .style("cursor", "pointer")
+      .on("click", (d)->
+        $('#show_form').attr(
+          'action',
+          "<%= Rails.application.config.relative_url_root %>/archives/#{d.archive_id}"
+        )
+        $('#view_type').val('graph')
+        $('#show_form').submit()
+       )
+
+    circles = node
+      .append('circle')
+      .attr('id', 'circle')
+      .attr('r', 65)
+      .attr("x", (d)-> return -(d.width / 2) - 6 )
+      .attr("y", (d)-> return -(d.height / 2) - 6 )
+
+    node.append('clipPath')
+      .attr('id', 'clip')
+      .append('use')
+      .attr('xlink:href', '#circle')
+
+    images = node
+      .append('image')
+      .attr("xlink:href", (d)-> return $.reki.graph.url(d.file, d.ext, d.size_name))
+      .attr("x", (d)-> return -(d.width / 2) )
+      .attr("y", (d)-> return -(d.height / 2) )
+      .attr("width", (d)-> return d.width )
+      .attr("height", (d)-> return d.height )
+      .attr('clip-path', 'url(#clip)')
+
+    zoom.on "zoom", (e)->
+      g.attr(
+        "transform",
+        "translate(#{d3.event.translate})scale(#{d3.event.scale})"
+      )
+
+    svg.call(zoom)
+
+    # 初期位置と計算の試行回数とjsonが同じならグラフの形状が同じになる
+    force.start();
+    for i in [0..num]
+      force.tick();
+    force.stop();
+
+    $('.loader').remove();
+
+    link.selectAll("line")
+      .attr("x1", (d)-> return d.source.x )
+      .attr("y1", (d)-> return d.source.y )
+      .attr("x2", (d)-> return d.target.x )
+      .attr("y2", (d)-> return d.target.y )
+
+    node.attr "transform", (d) ->
+      return "translate(#{d.x},#{d.y})"
